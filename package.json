@@ -19,6 +19,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf lib",
+    "serve": "http-server -p 8000 -o example.html",
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,6 +27,7 @@
     "lib"
   ],
   "devDependencies": {
+    "http-server": "^14.1.1",
     "typescript": "^5.9.3"
   }
 }

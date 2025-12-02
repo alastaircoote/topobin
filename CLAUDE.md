@@ -26,13 +26,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Downloads `counties-10m.json` from US Atlas if not present
   - Tests with 3,231 counties and 9,869 arcs
   - Shows memory comparison, performance metrics, and round-trip verification
+- **Visual Example**: `npm run serve` - Starts a local server and opens the interactive D3 visualization
+  - Serves `example.html` at http://localhost:8000
+  - Renders the TopoJSON data using D3.js and the standard topojson library
+  - Displays statistics and an interactive map of all 3,231 counties
 - **Test**: `npm test` (placeholder - not yet implemented)
 
 The TypeScript configuration includes both ES2020 and DOM libraries to support both Node.js and browser environments.
 
 ## Architecture
 
-The library consists of four main modules:
+The library consists of five main modules:
 
 ### `src/types.ts`
 Type definitions for TopoJSON structures:
@@ -57,7 +61,13 @@ Decodes binary format back to TopoJSON:
 
 ### `src/index.ts`
 Main entry point that exports all public APIs and utility functions:
-- `compareMemoryUsage()` - Compares JSON vs binary memory usage
+- `compareMemoryUsage()` - Compares JSON vs binary memory usage (both serialized and in-memory)
+
+### `src/memory-estimate.ts`
+Internal utility for estimating in-memory size of TopoJSON objects:
+- `estimateTopologyMemorySize(topology)` - Estimates memory based on JavaScript's memory model
+- **Not part of public API** - Used only internally by `compareMemoryUsage()` for examples
+- Accounts for 64-bit floats, array overhead, and object structures
 
 ## Binary Format Structure
 
@@ -87,8 +97,11 @@ curl -L https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json -o counties-10
 ## Performance Results
 
 Tested with counties-10m.json:
-- Encoding: ~25ms
-- Decoding: ~20ms
-- Memory savings: 6.6% (could be improved by optimizing object storage)
-- Arc data: 52.4% of binary format (efficiently stored in Int32Array)
-- Perfect round-trip conversion verified
+- **Encoding**: ~25ms
+- **Decoding**: ~20ms
+- **Serialized size savings**: 6.6% (822.4 KB → 767.8 KB)
+- **In-memory savings**: 85.9% (5.30 MB → 0.75 MB)
+  - The in-memory savings are much larger because JavaScript objects have significant overhead
+  - ArrayBuffer stores data as raw bytes vs. 64-bit floats for each number in JSON
+- **Arc data**: 52.4% of binary format (efficiently stored in Int32Array)
+- **Perfect round-trip conversion verified**
