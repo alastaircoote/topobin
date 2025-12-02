@@ -30,7 +30,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - Serves `example.html` at http://localhost:8000
   - Renders the TopoJSON data using D3.js and the standard topojson library
   - Displays statistics and an interactive map of all 3,231 counties
-- **Test**: `npm test` (placeholder - not yet implemented)
+- **Test**: `npm test` - Runs all tests using Node.js built-in test runner
+  - 24 test cases covering encoding, decoding, version checking, and memory usage
+  - Tests are in the `tests/` directory using Node's `node:test` module
+  - `npm run test:watch` - Runs tests in watch mode for development
 
 The TypeScript configuration includes both ES2020 and DOM libraries to support both Node.js and browser environments.
 

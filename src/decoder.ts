@@ -109,8 +109,13 @@ export function decode(buffer: ArrayBuffer): Topology {
   const arcOffsets = new Uint32Array(buffer, offset, numArcs + 1);
   offset += arcOffsetsSize;
 
-  // Read arc data
+  // Ensure 8-byte alignment for Float64Array (when not using transform)
   const bytesPerCoord = hasTransform ? 4 : 8;
+  if (bytesPerCoord === 8 && offset % 8 !== 0) {
+    offset += 4; // Skip padding to reach 8-byte alignment
+  }
+
+  // Read arc data
   const arcDataSize = totalArcPoints * 2 * bytesPerCoord;
 
   const arcs: Arc[] = [];
@@ -233,6 +238,11 @@ export class BinaryTopologyView {
     this.arcOffsetsStart = offset;
     this.arcOffsets = new Uint32Array(buffer, offset, this.numArcs + 1);
     offset += (this.numArcs + 1) * 4;
+
+    // Ensure 8-byte alignment for Float64Array (when not using transform)
+    if (!this.hasTransform && offset % 8 !== 0) {
+      offset += 4; // Skip padding to reach 8-byte alignment
+    }
 
     // Read arc data
     this.arcDataStart = offset;

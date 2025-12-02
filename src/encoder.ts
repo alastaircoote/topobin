@@ -34,8 +34,14 @@ export function encode(topology: Topology): ArrayBuffer {
   const arcOffsetsSize = (numArcs + 1) * 4;
   offset += arcOffsetsSize;
 
-  // Arc data: totalArcPoints x 2 coordinates
+  // Ensure 8-byte alignment for Float64Array (when not using transform)
   const bytesPerCoord = hasTransform ? 4 : 8; // Int32 if quantized, Float64 otherwise
+  if (bytesPerCoord === 8 && offset % 8 !== 0) {
+    offset += 4; // Add padding to reach 8-byte alignment
+  }
+  const arcDataStart = offset;
+
+  // Arc data: totalArcPoints x 2 coordinates
   const arcDataSize = totalArcPoints * 2 * bytesPerCoord;
   offset += arcDataSize;
 
@@ -96,6 +102,9 @@ export function encode(topology: Topology): ArrayBuffer {
   }
   arcOffsets[numArcs] = arcPointOffset; // Total points
   offset += arcOffsetsSize;
+
+  // Skip padding to reach arcDataStart if needed
+  offset = arcDataStart;
 
   // Write arc data
   if (hasTransform) {
