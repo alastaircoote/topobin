@@ -1,11 +1,5 @@
 import { Topology, Arc } from './types.js';
-
-const MAGIC = 0x544F504F; // "TOPO" in ASCII
-const VERSION = 1;
-
-// Flag bits
-const FLAG_HAS_TRANSFORM = 1 << 0;
-const FLAG_HAS_BBOX = 1 << 1;
+import { MAGIC, VERSION, FLAG_HAS_TRANSFORM, FLAG_HAS_BBOX } from './constants.js';
 
 /**
  * Encodes a TopoJSON topology into a binary format using typed arrays

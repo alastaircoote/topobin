@@ -34,9 +34,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The TypeScript configuration includes both ES2020 and DOM libraries to support both Node.js and browser environments.
 
+## Version Management
+
+The binary format includes version information to ensure compatibility:
+- **Current version**: 1
+- **Version field**: 2-byte unsigned integer in the header
+- **Version checking**: `getVersion()` and `isCompatibleVersion()` functions
+- **Automatic validation**: Decoder rejects incompatible versions with clear error messages
+
+When the format changes in future versions:
+1. Increment `VERSION` in `src/constants.ts`
+2. Update `MIN_SUPPORTED_VERSION` if backward compatibility is broken
+3. The decoder will automatically reject incompatible files
+
 ## Architecture
 
-The library consists of five main modules:
+The library consists of six main modules:
 
 ### `src/types.ts`
 Type definitions for TopoJSON structures:
@@ -68,6 +81,13 @@ Internal utility for estimating in-memory size of TopoJSON objects:
 - `estimateTopologyMemorySize(topology)` - Estimates memory based on JavaScript's memory model
 - **Not part of public API** - Used only internally by `compareMemoryUsage()` for examples
 - Accounts for 64-bit floats, array overhead, and object structures
+
+### `src/constants.ts`
+Shared constants for the binary format:
+- `VERSION` - Current binary format version (exported in public API)
+- `MIN_SUPPORTED_VERSION` / `MAX_SUPPORTED_VERSION` - Version compatibility range
+- `MAGIC` - Magic number identifying TopoJSON binary format (0x544F504F = "TOPO")
+- Flag constants for format features (transform, bbox, etc.)
 
 ## Binary Format Structure
 

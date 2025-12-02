@@ -9,7 +9,8 @@ import type { Topology } from './types.js';
 import { estimateTopologyMemorySize } from './memory-estimate.js';
 
 export { encode, getMemoryStats } from './encoder.js';
-export { decode, BinaryTopologyView } from './decoder.js';
+export { decode, BinaryTopologyView, getVersion, isCompatibleVersion } from './decoder.js';
+export { VERSION, MIN_SUPPORTED_VERSION, MAX_SUPPORTED_VERSION } from './constants.js';
 export type {
   Topology,
   Transform,

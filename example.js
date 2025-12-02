@@ -1,7 +1,17 @@
-import { encode, decode, compareMemoryUsage, BinaryTopologyView, getMemoryStats } from './lib/index.js';
+import {
+  encode,
+  decode,
+  compareMemoryUsage,
+  BinaryTopologyView,
+  getMemoryStats,
+  getVersion,
+  isCompatibleVersion,
+  VERSION
+} from './lib/index.js';
 import { readFileSync } from 'fs';
 
 console.log('=== TopoJSON Binary Encoding Example ===\n');
+console.log(`Using topobin library version: ${VERSION}\n`);
 
 // Load real TopoJSON data (US Counties from US Atlas)
 console.log('Loading US counties TopoJSON data...');
@@ -19,7 +29,13 @@ console.log('Encoding TopoJSON to binary format...');
 const startEncode = performance.now();
 const binaryBuffer = encode(topology);
 const encodeTime = performance.now() - startEncode;
-console.log(`Encoding took: ${encodeTime.toFixed(2)}ms\n`);
+console.log(`Encoding took: ${encodeTime.toFixed(2)}ms`);
+
+// Check version of encoded buffer
+const bufferVersion = getVersion(binaryBuffer);
+const isCompatible = isCompatibleVersion(binaryBuffer);
+console.log(`Binary format version: ${bufferVersion}`);
+console.log(`Compatible with this library: ${isCompatible ? 'Yes' : 'No'}\n`);
 
 // Show memory comparison
 const comparison = compareMemoryUsage(topology, binaryBuffer);

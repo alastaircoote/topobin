@@ -1,10 +1,42 @@
 import { Topology, Transform, Arc } from './types.js';
+import {
+  MAGIC,
+  MIN_SUPPORTED_VERSION,
+  MAX_SUPPORTED_VERSION,
+  FLAG_HAS_TRANSFORM,
+  FLAG_HAS_BBOX
+} from './constants.js';
 
-const MAGIC = 0x544F504F; // "TOPO" in ASCII
+/**
+ * Gets the version number from a binary TopoJSON buffer without fully decoding it
+ * Returns null if the buffer is not a valid TopoJSON binary format
+ */
+export function getVersion(buffer: ArrayBuffer): number | null {
+  if (buffer.byteLength < 6) {
+    return null; // Too small to contain magic + version
+  }
 
-// Flag bits
-const FLAG_HAS_TRANSFORM = 1 << 0;
-const FLAG_HAS_BBOX = 1 << 1;
+  const view = new DataView(buffer);
+  const magic = view.getUint32(0, false);
+
+  if (magic !== MAGIC) {
+    return null; // Not a valid TopoJSON binary format
+  }
+
+  return view.getUint16(4, false);
+}
+
+/**
+ * Checks if a binary TopoJSON buffer is compatible with this library version
+ * Returns true if the buffer can be decoded, false otherwise
+ */
+export function isCompatibleVersion(buffer: ArrayBuffer): boolean {
+  const version = getVersion(buffer);
+  if (version === null) {
+    return false;
+  }
+  return version >= MIN_SUPPORTED_VERSION && version <= MAX_SUPPORTED_VERSION;
+}
 
 /**
  * Decodes a binary TopoJSON buffer back into a TopoJSON topology object
@@ -20,8 +52,12 @@ export function decode(buffer: ArrayBuffer): Topology {
   }
 
   const version = view.getUint16(offset, false); offset += 2;
-  if (version !== 1) {
-    throw new Error(`Unsupported version: ${version}`);
+  if (version < MIN_SUPPORTED_VERSION || version > MAX_SUPPORTED_VERSION) {
+    throw new Error(
+      `Unsupported binary format version ${version}. ` +
+      `This library supports versions ${MIN_SUPPORTED_VERSION}-${MAX_SUPPORTED_VERSION}. ` +
+      `Please upgrade the topobin library to decode this file.`
+    );
   }
 
   const flags = view.getUint16(offset, false); offset += 2;
@@ -165,10 +201,17 @@ export class BinaryTopologyView {
     let offset = 0;
     const magic = this.view.getUint32(offset, false); offset += 4;
     if (magic !== MAGIC) {
-      throw new Error('Invalid TopoJSON binary format');
+      throw new Error('Invalid TopoJSON binary format: bad magic number');
     }
 
     const version = this.view.getUint16(offset, false); offset += 2;
+    if (version < MIN_SUPPORTED_VERSION || version > MAX_SUPPORTED_VERSION) {
+      throw new Error(
+        `Unsupported binary format version ${version}. ` +
+        `This library supports versions ${MIN_SUPPORTED_VERSION}-${MAX_SUPPORTED_VERSION}. ` +
+        `Please upgrade the topobin library to decode this file.`
+      );
+    }
     const flags = this.view.getUint16(offset, false); offset += 2;
     this.numArcs = this.view.getUint32(offset, false); offset += 4;
     const totalArcPoints = this.view.getUint32(offset, false); offset += 4;
