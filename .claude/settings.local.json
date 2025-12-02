@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(node lib/index.js:*)",
+      "Bash(npm run clean:*)",
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(node example.js:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

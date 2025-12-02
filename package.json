@@ -1,0 +1,23 @@
+{
+  "name": "topobin",
+  "version": "1.0.0",
+  "description": "Memory-efficient binary encoding for TopoJSON using typed arrays",
+  "license": "ISC",
+  "author": "",
+  "keywords": ["topojson", "geojson", "binary", "typed-array", "geography", "topology", "encoding"],
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf lib",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "lib"
+  ],
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
