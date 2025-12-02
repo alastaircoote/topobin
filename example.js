@@ -23,10 +23,16 @@ console.log(`Encoding took: ${encodeTime.toFixed(2)}ms\n`);
 
 // Show memory comparison
 const comparison = compareMemoryUsage(topology, binaryBuffer);
-console.log('Memory Usage Comparison:');
-console.log(`  JSON format:   ${comparison.jsonBytes.toLocaleString()} bytes (${(comparison.jsonBytes / 1024).toFixed(1)} KB)`);
-console.log(`  Binary format: ${comparison.binaryBytes.toLocaleString()} bytes (${(comparison.binaryBytes / 1024).toFixed(1)} KB)`);
+console.log('Serialized Size Comparison:');
+console.log(`  JSON string:   ${comparison.jsonBytes.toLocaleString()} bytes (${(comparison.jsonBytes / 1024).toFixed(1)} KB)`);
+console.log(`  Binary buffer: ${comparison.binaryBytes.toLocaleString()} bytes (${(comparison.binaryBytes / 1024).toFixed(1)} KB)`);
 console.log(`  Savings:       ${comparison.savingsBytes.toLocaleString()} bytes (${comparison.savingsPercent.toFixed(1)}%)\n`);
+
+console.log('In-Memory Size Comparison (actual runtime usage):');
+console.log(`  JSON object:   ${comparison.inMemoryJsonBytes.toLocaleString()} bytes (${(comparison.inMemoryJsonBytes / 1024 / 1024).toFixed(2)} MB)`);
+console.log(`  Binary buffer: ${comparison.inMemoryBinaryBytes.toLocaleString()} bytes (${(comparison.inMemoryBinaryBytes / 1024 / 1024).toFixed(2)} MB)`);
+console.log(`  Savings:       ${comparison.inMemorySavingsBytes.toLocaleString()} bytes (${comparison.inMemorySavingsPercent.toFixed(1)}%)`);
+console.log(`  Note: Estimated based on JavaScript's memory model (64-bit numbers, array overhead, etc.)\n`);
 
 // Show detailed memory breakdown
 const stats = getMemoryStats(binaryBuffer);
