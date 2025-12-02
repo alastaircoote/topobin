@@ -1,6 +1,6 @@
 # topobin
 
-A library that creates a more memory-efficient binary encoding for TopoJSON using typed arrays.
+A library that creates a more memory-efficient binary encoding for TopoJSON using typed arrays. This is also an experiment I'm doing in using AI to generate a library with minimal manual code input.
 
 ## Overview
 
